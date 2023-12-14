@@ -1,0 +1,10 @@
+name,capacity,action,content
+ship1,3000,true,40
+ship2,2000,false,1950
+ship3,5000,true,5000
+ship4,3500,false,3500
+ship5,9000,true,9000
+ship6,4500,false,300
+ship9,8000,false,1000
+ship8,4700,true,0
+ship7,2500,false,1500
