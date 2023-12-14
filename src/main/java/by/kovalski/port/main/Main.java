@@ -57,7 +57,7 @@ public class Main {
     for (Thread t : threads) {
       t.start();
     }
-    sleep(10000);
+    sleep(20000);
     System.out.println(port.getCurrentContent());
   }
 }

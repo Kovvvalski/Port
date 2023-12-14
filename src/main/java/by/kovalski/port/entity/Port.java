@@ -31,7 +31,7 @@ public class Port {
 
   }
 
-  private Port(String name,int maxCapacity, int currentContent, List<String> piers) {
+  private Port(String name, int maxCapacity, int currentContent, List<String> piers) {
     this.name = name;
     this.semaphore = new Semaphore(piers.size());
     this.maxCapacity = maxCapacity;
@@ -45,11 +45,11 @@ public class Port {
     notifyObserver();
   }
 
-  public static Port getInstance(String name,int maxCapacity, int currentContent, List<String> piers) {
+  public static Port getInstance(String name, int maxCapacity, int currentContent, List<String> piers) {
     if (instance == null) {
       synchronized (Port.class) {
         if (!isCreated) {
-          instance = new Port(name,maxCapacity, currentContent, piers);
+          instance = new Port(name, maxCapacity, currentContent, piers);
           isCreated = true;
         }
       }
@@ -101,25 +101,18 @@ public class Port {
     }
   }
 
-  public void doAction(int maxCapacity,boolean action, int content, String pier) throws PortException {
+  public void doAction(int maxCapacity, boolean action, int content, String pier) throws PortException {
     if (pier == null) {
       logger.error("Null pointer of pier");
       throw new PortException("Null pointer of pier");
     }
-    synchronized (Port.class) {
-      int newContent = 0;
-      if (action) {
-        newContent = currentContent.get() + content;
-        currentContent.set(newContent);
-      } else {
-        newContent = currentContent.get() + content - maxCapacity;
-        currentContent.set(newContent);
-      }
-      notifyObserver();
+    if (action) {
+      currentContent.set(currentContent.get() + content);
+    } else {
+      currentContent.set(currentContent.get() + content - maxCapacity);
     }
-
+    notifyObserver();
   }
-
   synchronized public void freePier(String pier) {
     availablePiers.add(pier);
     semaphore.release();
