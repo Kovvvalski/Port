@@ -26,16 +26,4 @@ public class PortCsvReader implements PortReader {
     return port;
   }
 
-  @Override
-  public List<String> readPiers(String filePath) throws PortException {
-    List<String> out = null;
-    try{
-      out = Files.readAllLines(Paths.get(filePath));
-    }catch (IOException e){
-      logger.error("Error during reading pierces",e);
-      throw new PortException("Error during reading pierces",e);
-    }
-    out.remove(0);
-    return out;
-  }
 }

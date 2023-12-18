@@ -11,9 +11,10 @@ import java.util.concurrent.TimeUnit;
 public class Ship extends Thread {
   private static final Logger logger = LogManager.getLogger();
   private static final double DEFAULT_CONTENT_COEFFICIENT = 0.5;
+  private static final Random random = new Random();
   private final long id = IdGenerator.getId();
   private int maxCapacity;
-  private boolean action; // 1 - load to port, 0 - unload from port
+  private boolean action; // true - load to port, false - unload from port
   private int currentContent;
 
   public Ship(String name, int maxCapacity, boolean action, int currentContent) {
@@ -54,22 +55,24 @@ public class Ship extends Thread {
   @Override
   public void run() {
     Port port = Port.getInstance();
-    String pier = null;
+    logger.info(Thread.currentThread().getName() + " is trying to get pier");
+    Pier pier = port.getPier();
+    if (pier != null)
+      logger.info(Thread.currentThread().getName() + " got pier " + pier.getId());
+    else {
+      logger.error("In thread " + getName() + " error during getting pier");
+      return;
+    }
     try {
-      logger.info(Thread.currentThread().getName() + " is trying to get pier");
-      pier = port.getPier();
-      logger.info(Thread.currentThread().getName() + " got pier " + pier);
+      port.doAction(maxCapacity, action, currentContent, pier);
+      TimeUnit.SECONDS.sleep(random.nextInt(2) + 1);
     } catch (PortException e) {
-      e.printStackTrace();
+      logger.error("Error during doing action in thread " + getName(), e);
+      return;
+    } catch (InterruptedException e) {
+      logger.error("Thread " + getName() + " is interrupted", e);
     }
-    try {
-      port.doAction(maxCapacity,action, currentContent, pier);
-      Random random = new Random();
-      TimeUnit.SECONDS.sleep(random.nextInt(2)+1);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    logger.info(Thread.currentThread().getName() + " finished work with pier " + pier);
+    logger.info(Thread.currentThread().getName() + " finished work with pier " + pier.getId());
     port.freePier(pier);
   }
 }
