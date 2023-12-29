@@ -59,5 +59,6 @@ public class Main {
     }
     sleep(20000);
     System.out.println(port.getCurrentContent());
+
   }
 }
